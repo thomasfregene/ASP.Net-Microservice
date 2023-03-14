@@ -33,7 +33,7 @@ namespace Ordering.Infrastructure.Mail
             var from = new EmailAddress
             {
                 Email = _emailSettings.FromAddress,
-                Name = _emailSettings.FromName
+                Name = _emailSettings.  
             };
 
             var senGridMessage = MailHelper.CreateSingleEmail(from, to, subject, emailBody, emailBody);
