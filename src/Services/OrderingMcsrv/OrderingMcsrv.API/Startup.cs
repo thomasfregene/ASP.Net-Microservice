@@ -1,5 +1,3 @@
-using EventBus.Messages.Commons;
-using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,15 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Ordering.API.EventBusConsumer;
-using Ordering.Application;
-using Ordering.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ordering.API
+namespace OrderingMcsrv.API
 {
     public class Startup
     {
@@ -30,33 +25,11 @@ namespace Ordering.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationServices();
-            services.AddInfrastructureService(Configuration);
-
-            //MassTransit RabbitMQ Configuration
-            services.AddMassTransit(config =>
-            {
-                config.AddConsumer<BasketCheckoutConsumer>();
-                config.UsingRabbitMq((cxt, cfg) =>
-                {
-                    
-                    cfg.Host(Configuration["EventBusSettings:HostAddress"]);
-                    cfg.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueues, c =>
-                    {
-                        c.ConfigureConsumer<BasketCheckoutConsumer>(cxt);
-                    });
-                });
-            });
-            //services.AddMassTransitHostedService();
-
-            //general configuration
-            services.AddAutoMapper(typeof(Startup));
-            services.AddScoped<BasketCheckoutConsumer>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ordering.API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "OrderingMcsrv.API", Version = "v1" });
             });
         }
 
@@ -67,7 +40,7 @@ namespace Ordering.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ordering.API v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OrderingMcsrv.API v1"));
             }
 
             app.UseRouting();
